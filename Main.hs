@@ -32,13 +32,13 @@ scoreStrings strings = zip strings scores
     scores = [score x | x <- strings]
 
 score :: String -> Float
-score str = sum [ quad (weights Map.! x) (freqs Map.! x) | x <- ['a'..'z'] ++ [' ']]
+score str = sum [ chi (weights Map.! x) (freqs Map.! x) | x <- ['a'..'z'] ++ [' ']]
   where
     weights = CryptoPals.createWeights
     freqs = CryptoPals.getfreqs str
 
-quad :: Float -> Float -> Float
-quad w f = (f-w)^2/w
+chi :: Float -> Float -> Float
+chi w f = (f-w)^2/w
 
 sortFunction :: (String, Float) -> (String, Float) -> Data.Ord.Ordering
 sortFunction a b
