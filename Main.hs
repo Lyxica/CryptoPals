@@ -1,9 +1,19 @@
+import qualified CryptoPals
+import qualified Text.Hex
+import qualified Data.Text
+import qualified Data.ByteString
+import qualified Data.ByteString.Char8
+import qualified Data.Maybe
+import qualified Data.Bits
+import qualified GHC.Word
 import Data.Map (Map)
 import qualified Data.Map.Strict as Map
 import qualified Data.Char
 import qualified Data.Ord
 import qualified Data.Sort
-import qualified CryptoPals
+import qualified Debug.Trace
+import qualified Data.ByteString.UTF8
+
 
 filterCRchar a = [x | x <- a, x /= '\r']
 
@@ -47,3 +57,28 @@ sortFunction a b
   | score' < 0 = LT
   | otherwise = LT  
   where score' = snd a - snd b
+
+-- "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
+-- XOR rotating key: ICE
+
+-- string representing key, take key and get its bytestring value, we take message and gets byte string, repeat key  
+rotatingKey :: String -> String -> Text.Hex.Text
+rotatingKey key message = test
+  where
+    keybytes = f key
+    messagebytes = f message
+    f = Data.ByteString.unpack . Data.ByteString.UTF8.fromString
+    tupledata = (zip messagebytes (cycle keybytes))
+    xoreddata = [Data.Bits.xor x y | (x, y) <- tupledata]
+    test = Text.Hex.encodeHex . Data.ByteString.pack $ xoreddata
+
+
+hammingDistance :: Eq a => [a] -> [a] -> Maybe Int
+hammingDistance xs ys count
+  |length xs /= length ys = Nothing
+  |length xs == 0 Just count
+  |last xs == last ys = hammingDistance (init xs) (init ys) count
+
+
+
+
